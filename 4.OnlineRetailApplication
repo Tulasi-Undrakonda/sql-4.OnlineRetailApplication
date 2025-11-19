@@ -1,0 +1,76 @@
+USE OnlineRetailApplication;
+
+-- 1️⃣ Count total customers
+SELECT COUNT(*) AS total_customers
+FROM customers;
+
+-- 2️⃣ Count number of orders per customer
+SELECT customer_id, COUNT(*) AS total_orders
+FROM orders
+GROUP BY customer_id;
+
+-- 3️⃣ Total sales (sum of all orders)
+SELECT SUM(total_amount) AS total_sales
+FROM orders;
+
+-- 4️⃣ Average order amount
+SELECT AVG(total_amount) AS average_order_amount
+FROM orders;
+
+-- 5️⃣ Maximum and minimum order amounts
+SELECT MAX(total_amount) AS max_order, MIN(total_amount) AS min_order
+FROM orders;
+
+-- 6️⃣ Total quantity of products in each category
+SELECT c.category_name, SUM(p.stock_quantity) AS total_stock
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.category_name;
+
+-- 7️⃣ Average product price per category
+SELECT c.category_name, AVG(p.price) AS avg_price
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.category_name;
+
+-- 8️⃣ Number of products per category
+SELECT c.category_name, COUNT(p.product_id) AS total_products
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.category_name;
+
+-- 9️⃣ Total sales per customer
+SELECT o.customer_id, CONCAT(c.first_name,' ',c.last_name) AS customer_name, SUM(o.total_amount) AS total_spent
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+GROUP BY o.customer_id;
+
+-- 🔟 Filter customers who spent more than 500
+SELECT o.customer_id, CONCAT(c.first_name,' ',c.last_name) AS customer_name, SUM(o.total_amount) AS total_spent
+FROM orders o
+JOIN customers c ON o.customer_id = c.customer_id
+GROUP BY o.customer_id
+HAVING SUM(o.total_amount) > 500;
+
+-- 1️⃣1️⃣ Count orders by status
+SELECT status, COUNT(*) AS number_of_orders
+FROM orders
+GROUP BY status;
+
+-- 1️⃣2️⃣ Total revenue from each payment method
+SELECT payment_method, SUM(amount) AS total_revenue
+FROM payments
+GROUP BY payment_method;
+
+-- 1️⃣3️⃣ Average rating for each product
+SELECT p.product_name, AVG(r.rating) AS avg_rating
+FROM reviews r
+JOIN products p ON r.product_id = p.product_id
+GROUP BY p.product_name;
+
+-- 1️⃣4️⃣ Products with more than 1 review
+SELECT p.product_name, COUNT(r.review_id) AS total_reviews
+FROM reviews r
+JOIN products p ON r.product_id = p.product_id
+GROUP BY p.product_name
+HAVING COUNT(r.review_id) >= 1;
